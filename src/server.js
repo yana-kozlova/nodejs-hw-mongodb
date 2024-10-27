@@ -1,7 +1,9 @@
-import express from 'express';
+import express, { raw } from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
 import { env } from './utils/env.js';
+
+import * as contactServices from './services/contacts.js';
 
 export const startServer = () => {
   const app = express();
@@ -16,9 +18,31 @@ export const startServer = () => {
 
   app.use(logger);
 
-  app.get('/', (req, res) => {
+  app.get('/contacts',async (req, res) => {
+    const data = await contactServices.getContacts();
+
     res.json({
-      message: 'Start project'
+      status: 200,
+      message: 'Successfully found contacts!',
+      data
+    })
+  })
+
+  app.get('/contacts/:id', async (req, res) => {
+    const { id } = req.params
+
+    const data = await contactServices.getContactById(id);
+
+    if (!data) {
+      res.status(404).json({
+        message: `Contact not found`
+      })
+    }
+
+    res.json({
+      status: 200,
+      message: `Successfully found contact with id ${id}!`,
+      data
     })
   })
 
