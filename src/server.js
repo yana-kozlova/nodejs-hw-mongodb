@@ -1,5 +1,6 @@
 import express, { raw } from 'express';
 import cors from 'cors';
+import mongoose from 'mongoose';
 import pino from 'pino-http';
 import { env } from './utils/env.js';
 
@@ -18,7 +19,7 @@ export const startServer = () => {
 
   app.use(logger);
 
-  app.get('/contacts',async (req, res) => {
+  app.get('/contacts', async (req, res) => {
     const data = await contactServices.getContacts();
 
     res.json({
@@ -31,19 +32,25 @@ export const startServer = () => {
   app.get('/contacts/:id', async (req, res) => {
     const { id } = req.params
 
-    const data = await contactServices.getContactById(id);
+    try {
+      const data = await contactServices.getContactById(id);
 
-    if (!data) {
-      res.status(404).json({
-        message: `Contact not found`
-      })
+      if (!data) {
+        return res.status(404).json({
+          message: `Contact not found`
+        });
+      }
+
+      res.json({
+        status: 200,
+        message: `Successfully found contact with id ${id}!`,
+        data
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: 'Internal Server Error',
+      });
     }
-
-    res.json({
-      status: 200,
-      message: `Successfully found contact with id ${id}!`,
-      data
-    })
   })
 
   app.use((req, res) => {
@@ -60,5 +67,5 @@ export const startServer = () => {
 
   const port = Number(env('PORT', 3000));
 
-  app.listen(port, ()=> console.log('Server running on 3000 PORT'))
+  app.listen(port, () => console.log('Server running on 3000 PORT'))
 }
