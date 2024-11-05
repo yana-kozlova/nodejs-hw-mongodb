@@ -1,7 +1,3 @@
-// gGHdgYdW9VqQPk5P
-
-//mongodb+srv://jasen:<db_password>@cluster0.qilf5.mongodb.net/my-contacts?retryWrites=true&w=majority&appName=Cluster0
-
 import mongoose from 'mongoose';
 
 import {env} from '../utils/env.js';
