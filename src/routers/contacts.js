@@ -16,7 +16,7 @@ contactsRouter.get('/:id', isValidId, ctrlWrapper(movieControllers.getContactByI
 
 contactsRouter.post('/', validateBody(contactAddSchema), ctrlWrapper(movieControllers.addContactController));
 
-contactsRouter.patch('/:id', isValidId, ctrlWrapper(movieControllers.patchContactController));
+contactsRouter.patch('/:id', isValidId, validateBody(contactAddSchema), ctrlWrapper(movieControllers.patchContactController));
 
 contactsRouter.delete('/:id', isValidId, ctrlWrapper(movieControllers.deleteContactController));
 
