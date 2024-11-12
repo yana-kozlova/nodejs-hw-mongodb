@@ -1,16 +1,31 @@
 import createHttpError from 'http-errors';
 
 import * as contactServices from '../services/contacts.js';
+import { parseFilterParams } from '../utils/parseFilterParams.js';
+
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+import { parseSortParams } from '../utils/parseSortParams.js';
 
 export const getContactsController = async (req, res) => {
-  const data = await contactServices.getContacts();
+  const { page, perPage } = parsePaginationParams(req.query);
+  const { sortBy, sortOrder } = parseSortParams(req.query);
+  const { isFavourite } = parseFilterParams(req.query);
+
+  console.log(isFavourite);
+  const data = await contactServices.getContacts({
+    page,
+    perPage,
+    sortBy,
+    sortOrder,
+    isFavourite
+  });
 
   res.json({
     status: 200,
     message: 'Successfully found contacts!',
     data
-  })
-}
+  });
+};
 
 export const getContactByIdController = async (req, res, next) => {
   const { id } = req.params;
@@ -78,4 +93,3 @@ export const deleteContactController = async (req, res, next) => {
     next(error);
   }
 };
-

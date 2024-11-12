@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-import { typeList } from '../constants/contacts.js';
+import { phoneRegex, typeList } from '../constants/contacts.js';
 
 export const contactAddSchema = Joi.object({
   name: Joi.string().required().min(3).max(20).messages({
@@ -9,7 +9,7 @@ export const contactAddSchema = Joi.object({
     "string.max": "Name should have at most {#limit} characters",
     "string.empty": "Name cannot be empty"
   }),
-  phoneNumber: Joi.string().pattern(/^\+380\d{9}$/).required().messages({
+  phoneNumber: Joi.string().pattern(phoneRegex).required().messages({
     "any.required": "Phone is required",
     "string.pattern.base": "Phone number must be in the format +380XXXXXXXXX",
     "string.empty": "Phone number cannot be empty"
