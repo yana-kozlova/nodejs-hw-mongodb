@@ -1,17 +1,23 @@
 import {Router} from 'express';
 import * as movieControllers from '../controllers/contact.js';
+
+import { isValidId } from '../middlewares/isValidId.js';
+
 import ctrlWrapper from '../utils/ctrlWrapper.js';
+import validateBody from '../utils/validateBody.js';
+
+import { contactAddSchema } from '../validation/contacts.js';
 
 const contactsRouter = Router();
 
 contactsRouter.get('/', ctrlWrapper(movieControllers.getContactsController));
 
-contactsRouter.get('/:id', ctrlWrapper(movieControllers.getContactByIdController));
+contactsRouter.get('/:id', isValidId, ctrlWrapper(movieControllers.getContactByIdController));
 
-contactsRouter.post('/', ctrlWrapper(movieControllers.addContactController));
+contactsRouter.post('/', validateBody(contactAddSchema), ctrlWrapper(movieControllers.addContactController));
 
-contactsRouter.patch('/:id', ctrlWrapper(movieControllers.patchContactController));
+contactsRouter.patch('/:id', isValidId, ctrlWrapper(movieControllers.patchContactController));
 
-contactsRouter.delete('/:id', ctrlWrapper(movieControllers.deleteContactController));
+contactsRouter.delete('/:id', isValidId, ctrlWrapper(movieControllers.deleteContactController));
 
 export default contactsRouter;
