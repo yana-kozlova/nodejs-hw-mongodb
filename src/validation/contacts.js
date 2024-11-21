@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { Schema } from 'mongoose';
 
 import { phoneRegex, typeList } from '../constants/contacts.js';
 

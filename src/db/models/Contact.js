@@ -24,7 +24,12 @@ const contactSchema = new Schema({
     type: String,
     enum: typeList,
     required: true,
-    default: 'personal'
+    default: 'personal',
+  },
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'users',
+    required: true,
   },
 }, {
   versionKey: false,

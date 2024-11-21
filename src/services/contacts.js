@@ -3,7 +3,7 @@ import ContactCollection from '../db/models/Contact.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
 export const getContacts = async ({
-                                    page = 1, perPage = 10, sortOrder = SORT_ORDER.ASC, sortBy = '_id', isFavourite
+                                    page = 1, perPage = 10, sortOrder = SORT_ORDER.ASC, sortBy = '_id', isFavourite, filter
                                   }) => {
   const limit = perPage;
   const skip = (page - 1) * perPage;
@@ -17,6 +17,10 @@ export const getContacts = async ({
     contactsQuery = contactsQuery.where('isFavourite').eq(isFavourite);
   }
 
+  if(filter.userId) {
+    contactsQuery.where("userId").equals(filter.userId);
+  }
+
   const contacts = await contactsQuery.exec();
 
   const totalContacts = await ContactCollection.countDocuments(isFavourite !== undefined ? { isFavourite: isFavourite } : {});
@@ -28,7 +32,9 @@ export const getContacts = async ({
   };
 };
 
-export const getContactById = id => ContactCollection.findById(id);
+export const getContactById = id => {
+  return ContactCollection.findById(id);
+}
 
 export const addContact = payload => ContactCollection.create(payload);
 
