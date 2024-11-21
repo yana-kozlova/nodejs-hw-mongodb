@@ -3,7 +3,12 @@ import ContactCollection from '../db/models/Contact.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
 export const getContacts = async ({
-                                    page = 1, perPage = 10, sortOrder = SORT_ORDER.ASC, sortBy = '_id', isFavourite, filter
+                                    page = 1,
+                                    perPage = 10,
+                                    sortOrder = SORT_ORDER.ASC,
+                                    sortBy = '_id',
+                                    isFavourite,
+                                    filter
                                   }) => {
   const limit = perPage;
   const skip = (page - 1) * perPage;
@@ -17,13 +22,12 @@ export const getContacts = async ({
     contactsQuery = contactsQuery.where('isFavourite').eq(isFavourite);
   }
 
-  contactsQuery.where("userId").equals(filter.userId);
+  contactsQuery.where('userId').equals(filter.userId);
 
   const contacts = await contactsQuery.exec();
 
   const totalContacts = await ContactCollection.countDocuments({
-    userId: filter.userId,
-    ...(isFavourite !== undefined && { isFavourite })
+    userId: filter.userId, ...(isFavourite !== undefined && { isFavourite })
   });
 
   const paginationData = calculatePaginationData(totalContacts, perPage, page);
@@ -37,9 +41,15 @@ export const getContactById = (_id, userId) => ContactCollection.findOne({ _id, 
 
 export const addContact = payload => ContactCollection.create(payload);
 
-export const patchContact = async ({ _id, payload, options = {} }) => {
-  const rawResult = await ContactCollection.findOneAndUpdate({ _id }, payload, {
-    ...options, new: true, includeResultMetadata: true
+export const patchContact = async ({ _id, userId, payload, options = {} }) => {
+  const existingContact = await ContactCollection.findOne({ _id });
+
+  if (!existingContact) {
+    throw new Error('Contact not found');
+  }
+
+  const rawResult = await ContactCollection.findOneAndUpdate({ _id, userId }, payload, {
+    ...options, new: true, includeResultMetadata: true,
   });
 
   if (!rawResult || !rawResult.value) return null;
@@ -47,12 +57,8 @@ export const patchContact = async ({ _id, payload, options = {} }) => {
   return {
     data: rawResult.value,
   };
-}
-
-export const deleteContact = async (id) => {
-  const result = await ContactCollection.findOneAndDelete({
-    _id: id,
-  });
-
-  return result;
 };
+
+export const deleteContact = async (id, userId) => await ContactCollection.findOneAndDelete({
+  _id: id, userId
+});
