@@ -17,13 +17,14 @@ export const getContacts = async ({
     contactsQuery = contactsQuery.where('isFavourite').eq(isFavourite);
   }
 
-  if(filter.userId) {
-    contactsQuery.where("userId").equals(filter.userId);
-  }
+  contactsQuery.where("userId").equals(filter.userId);
 
   const contacts = await contactsQuery.exec();
 
-  const totalContacts = await ContactCollection.countDocuments(isFavourite !== undefined ? { isFavourite: isFavourite } : {});
+  const totalContacts = await ContactCollection.countDocuments({
+    userId: filter.userId,
+    ...(isFavourite !== undefined && { isFavourite })
+  });
 
   const paginationData = calculatePaginationData(totalContacts, perPage, page);
 
