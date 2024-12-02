@@ -1,10 +1,12 @@
 import createHttpError from 'http-errors';
 
 import * as contactServices from '../services/contacts.js';
+import { env } from '../utils/env.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
 
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
 export const getContactsController = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -53,7 +55,11 @@ export const getContactByIdController = async (req, res, next) => {
 
 export const addContactController = async (req, res) => {
   const { _id: userId } = req.user;
-  const data = await contactServices.addContact({...req.body, userId});
+  const photo = req.file;
+
+  const photoUrl = await saveFileToCloudinary(photo);
+
+  const data = await contactServices.addContact({...req.body, photo: photoUrl, userId});
 
   res.status(201).json({
     status: 201,
@@ -65,9 +71,12 @@ export const addContactController = async (req, res) => {
 export const patchContactController = async (req, res) => {
   const { id: _id } = req.params;
   const { _id: userId } = req.user;
+  const photo = req.file;
+
+  const photoUrl = await saveFileToCloudinary(photo);
 
   const result = await contactServices.patchContact({
-    _id, userId, payload: req.body
+    _id, userId, payload: {...req.body, photo: photoUrl}
   });
 
   if (!result) {
