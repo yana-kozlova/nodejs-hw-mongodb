@@ -1,0 +1,74 @@
+tags:
+  - OAuth
+summary: Confirm Google OAuth
+operationId: confirmOAuth
+description: 'Authenticate a user using a Google OAuth code. Logs in an existing user or registers a new one.'
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - code
+        properties:
+          code:
+            description: "The authorization code received from Google OAuth."
+            type: string
+            example: "4/0AX4XfWh9r8wGc5a2abcdefg..."
+responses:
+  '200':
+    description: Successfully authenticated via Google OAuth.
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully logged in via Google OAuth!
+            data:
+              type: object
+              properties:
+                accessToken:
+                  description: "The access token for the authenticated session."
+                  type: string
+                  example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  '401':
+    description: Unauthorized or invalid Google OAuth code.
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 401
+            message:
+              type: string
+              example: Invalid or expired Google OAuth code.
+  '500':
+    description: Server error during Google OAuth processing.
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 500
+            message:
+              type: string
+              example: An error occurred during Google OAuth processing.

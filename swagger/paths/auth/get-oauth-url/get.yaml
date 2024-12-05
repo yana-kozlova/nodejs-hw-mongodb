@@ -1,0 +1,47 @@
+tags:
+  - OAuth
+summary: Get Google OAuth URL
+operationId: getGoogleOAuthUrl
+description: 'Generate and retrieve a Google OAuth URL for user authentication.'
+responses:
+  '200':
+    description: Google OAuth URL retrieved successfully.
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Successfully get Google OAuth url!
+            data:
+              type: object
+              properties:
+                url:
+                  description: "The generated Google OAuth authentication URL."
+                  type: string
+                  format: uri
+                  example: "https://accounts.google.com/o/oauth2/auth?scope=email+profile..."
+  '500':
+    description: Server error response.
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 500
+            message:
+              type: string
+              example: Failed to generate Google OAuth URL due to server error.

@@ -1,7 +1,6 @@
 import createHttpError from 'http-errors';
 
 import * as contactServices from '../services/contacts.js';
-import { env } from '../utils/env.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
 
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';

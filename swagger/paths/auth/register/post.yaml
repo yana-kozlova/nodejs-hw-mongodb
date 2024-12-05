@@ -1,0 +1,111 @@
+tags:
+  - Auth
+summary: Register User
+operationId: registerUser
+description: 'Register a new user by providing their email, password, and additional details.'
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - email
+          - password
+          - name
+        properties:
+          email:
+            description: "The user's email address. Must be unique."
+            type: string
+            format: email
+            example: "user@example.com"
+          password:
+            description: "The password for the user account."
+            type: string
+            format: password
+            example: "SecurePassword123"
+          name:
+            description: "The full name of the user."
+            type: string
+            example: "John Doe"
+responses:
+  '201':
+    description: User registration successful.
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: Successfully registered a user!
+            data:
+              type: object
+              properties:
+                id:
+                  description: "The unique identifier for the newly registered user."
+                  type: string
+                  example: "63f1d2e5b7c923a7bc3d9e45"
+                email:
+                  type: string
+                  format: email
+                  example: "user@example.com"
+                name:
+                  type: string
+                  example: "John Doe"
+                items:
+                  $ref: '../../../components/schemas/user.yaml'
+  '409':
+    description: Email already in use.
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 409
+            message:
+              type: string
+              example: Email in use.
+  '400':
+    description: Bad request (e.g., missing or invalid input).
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 400
+            message:
+              type: string
+              example: Invalid input provided.
+  '500':
+    description: Server error response.
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 500
+            message:
+              type: string
+              example: An error occurred during user registration.

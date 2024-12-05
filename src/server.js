@@ -5,6 +5,7 @@ import cors from 'cors';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { logger } from './middlewares/logger.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
+import { swaggerDocs } from './middlewares/swaggerDocs.js';
 
 import { env } from './utils/env.js';
 
@@ -16,6 +17,8 @@ export const startServer = () => {
   app.use(cors());
   app.use(express.json());
   app.use(cookieParser());
+
+  app.use('/api-docs', ...swaggerDocs());
 
   app.use(logger);
 

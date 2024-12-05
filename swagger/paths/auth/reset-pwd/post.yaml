@@ -1,0 +1,92 @@
+tags:
+  - Auth
+summary: Reset Password
+operationId: resetPassword
+description: 'Reset the user password using a valid reset token.'
+requestBody:
+  content:
+    application/json:
+      schema:
+        type: object
+        required:
+          - token
+          - newPassword
+        properties:
+          token:
+            description: "The password reset token sent to the user's email."
+            type: string
+            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          newPassword:
+            description: "The new password to set for the user account."
+            type: string
+            format: password
+            example: "NewSecurePassword123"
+responses:
+  '200':
+    description: Password reset successful.
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Password was successfully reset!
+            data:
+              type: object
+              description: Empty object for additional metadata.
+  '400':
+    description: Bad request (e.g., invalid token or password does not meet criteria).
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 400
+            message:
+              type: string
+              example: Invalid token or password.
+  '401':
+    description: Unauthorized request.
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 401
+            message:
+              type: string
+              example: Unauthorized access or expired token.
+  '500':
+    description: Server error response.
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 500
+            message:
+              type: string
+              example: An error occurred while processing the password reset.
