@@ -3,25 +3,20 @@ import { findSession, findUser } from '../services/auth.js';
 
 export const authenticate = async (req, res, next) => {
   try {
-    const authHeader = req.get('Authorization');
+    const { refreshToken } = req.cookies;
 
-    if (!authHeader) {
-      throw createHttpError(401, "Authorization header missing");
+    if (!refreshToken) {
+      throw createHttpError(401, "Authorization token missing in cookies");
     }
 
-    const [bearer, token] = authHeader.split(" ");
+    const session = await findSession({ refreshToken });
 
-    if (bearer !== "Bearer") {
-      throw createHttpError(401, "Authorization header must be Bearer type");
-    }
-
-    const session = await findSession({ accessToken: token });
     if (!session) {
       throw createHttpError(401, "Session not found");
     }
 
-    if (Date.now() > session.accessTokenValidUntil) {
-      throw createHttpError(401, "Access token expired");
+    if (Date.now() > session.refreshTokenValidUntil) {
+      throw createHttpError(401, "Refresh token expired");
     }
 
     const user = await findUser({ _id: session.userId });
@@ -30,6 +25,9 @@ export const authenticate = async (req, res, next) => {
     }
 
     req.user = user;
+
+    req.headers['Authorization'] = `Bearer ${refreshToken}`;
+
     next();
   } catch (error) {
     console.error(`Authentication error: ${error.message}`);
