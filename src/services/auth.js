@@ -46,8 +46,8 @@ export const loginUser = async (payload) => {
     userId: user._id,
     accessToken,
     refreshToken,
-    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
-    refreshTokenValidUntil: new Date(Date.now() + ONE_MONTH),
+    accessTokenValidUntil: new Date(Date.now() + 6000),
+    refreshTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
   });
 };
 
@@ -62,8 +62,8 @@ const createSession = () => {
   return {
     accessToken,
     refreshToken,
-    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
-    refreshTokenValidUntil: new Date(Date.now() + ONE_MONTH),
+    accessTokenValidUntil: new Date(Date.now() + 6000),
+    refreshTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
   };
 };
 
@@ -189,5 +189,20 @@ export const loginOrSignupWithGoogle = async (code) => {
   return await SessionsCollection.create({
     userId: user._id,
     ...newSession,
+  });
+};
+
+export const setupSession = (res, session) => {
+  res.cookie('refreshToken', session.refreshToken, {
+    httpOnly: true,
+    expires: new Date(Date.now() + FIFTEEN_MINUTES),
+  });
+  res.cookie('accessToken', session.accessToken, {
+    httpOnly: true,
+    expires: new Date(Date.now() + 6000),
+  });
+  res.cookie('sessionId', session._id, {
+    httpOnly: true,
+    expires: new Date(Date.now() + FIFTEEN_MINUTES),
   });
 };
